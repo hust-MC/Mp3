@@ -10,7 +10,7 @@ public class Mp3_broadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        int cmd = intent.getExtras("cmd");
+        int cmd = intent.getIntExtra("cmd", -1);
         throw new UnsupportedOperationException("Not yet implemented");
     }
 }
