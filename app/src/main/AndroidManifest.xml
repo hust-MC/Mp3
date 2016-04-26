@@ -25,7 +25,7 @@
             android:exported="true" />
 
         <receiver
-            android:name="com.example.machao10.broadcast_receiver.Mp3_broadcastReceiver"
+            android:name="com.example.machao10.broadcast_receiver.Mp3Receiver"
             android:enabled="true"
             android:exported="true"></receiver>
     </application>

@@ -16,8 +16,10 @@
         <ImageView
             android:id="@+id/pic"
             android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:scaleType="centerInside"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="2dp"
+            android:paddingLeft="15dp"
+            android:scaleType="fitStart"
             android:src="@drawable/cd" />
 
         <LinearLayout
@@ -41,14 +43,13 @@
                 android:textSize="20sp" />
         </LinearLayout>
 
-
         <ImageButton
-            android:layout_width="100dp"
+            android:layout_width="80dp"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:background="#0000"
-            android:padding="10dp"
-            android:scaleType="centerInside"
+            android:paddingBottom="8dp"
+            android:scaleType="fitCenter"
             android:src="@drawable/settings" />
     </RelativeLayout>
 
@@ -58,6 +59,11 @@
         android:layout_height="0dp"
         android:layout_weight="6"></android.support.v4.view.ViewPager>
 
+    <SeekBar
+        android:id="@+id/seek"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -65,6 +71,7 @@
         android:orientation="horizontal">
 
         <ImageButton
+            android:id="@+id/bt_previous"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -74,6 +81,7 @@
             android:src="@drawable/previous" />
 
         <ImageButton
+            android:id="@+id/bt_play"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -83,6 +91,7 @@
             android:src="@drawable/play" />
 
         <ImageButton
+            android:id="@+id/bt_next"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -92,6 +101,7 @@
             android:src="@drawable/next" />
 
         <ImageButton
+            android:id="@+id/bt_mode"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
