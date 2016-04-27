@@ -8,10 +8,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -30,6 +33,8 @@ import android.widget.Toast;
 
 import com.example.machao10.playservice.PlayService;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,13 +43,15 @@ public class MainActivity extends FragmentActivity {
     ViewPager viewPager;
     TextView tvMusicName, tvMuiscTime;
     ImageView ivPicture;
-    ImageButton btPlay, btPrevious, btNext, btMode;
+    ImageButton btPlay, btPrevious, btNext, btMode, btSettings;
     SeekBar seekBar;
 
     List<MusicInfo> musicInfos;
     List<Fragment> fragmentList;
     Mp3Player player;
     Mp3Receiver receiver;
+
+    public final int REQUEST_CODE = 100;
 
     /**
      * android 6的机型必须动态申请权限
@@ -71,15 +78,18 @@ public class MainActivity extends FragmentActivity {
                 play(position);
             }
         });
+        FragmentLRC fragmentLRC = new FragmentLRC();
         fragmentList = new ArrayList<>();
         fragmentList.add(fragmentListView);
-        fragmentList.add(new FragmentLRC());
+        fragmentList.add(fragmentLRC);
+
         viewPager.setAdapter(new HomePagerAdapter(getSupportFragmentManager()));
         viewPager.setOffscreenPageLimit(2);
     }
 
     private void initWidget() {
         viewPager = (ViewPager) findViewById(R.id.view_pager);
+
         tvMusicName = (TextView) findViewById(R.id.music_name);
         tvMuiscTime = (TextView) findViewById(R.id.music_time);
         ivPicture = (ImageView) findViewById(R.id.pic);
@@ -90,12 +100,14 @@ public class MainActivity extends FragmentActivity {
         btPrevious = (ImageButton) findViewById(R.id.bt_previous);
         btNext = (ImageButton) findViewById(R.id.bt_next);
         btMode = (ImageButton) findViewById(R.id.bt_mode);
+        btSettings = (ImageButton) findViewById(R.id.bt_settings);
 
         ControlButtonListener listener = new ControlButtonListener();
         btPlay.setOnClickListener(listener);
         btPrevious.setOnClickListener(listener);
         btNext.setOnClickListener(listener);
         btMode.setOnClickListener(listener);
+        btSettings.setOnClickListener(listener);
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -140,12 +152,35 @@ public class MainActivity extends FragmentActivity {
         seekBar.setProgress(0);
     }
 
+    private void setMode(int mode) {
+        switch (mode) {
+            case Mp3Player.MODE_LOOP_ALL:
+                btMode.setImageResource(R.drawable.loop_all);
+                break;
+            case Mp3Player.MODE_LOOP_SINGLE:
+                btMode.setImageResource(R.drawable.loop_single);
+                break;
+            case Mp3Player.MODE_RANDOM:
+                btMode.setImageResource(R.drawable.random);
+                break;
+            case Mp3Player.MODE_SEQ:
+                btMode.setImageResource(R.drawable.seq);
+                break;
+        }
+        player.setMode(mode);
+    }
+
     private void play() {
         play(player.getCurrentMusic());
     }
 
     private void play(int musicNum) {
         player.play(musicNum);
+        setDisplay();
+    }
+
+    private void play(String path) {
+        player.play(path);
         setDisplay();
     }
 
@@ -169,7 +204,6 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         android6Permission();
 
         setContentView(R.layout.activity_main);
@@ -194,6 +228,17 @@ public class MainActivity extends FragmentActivity {
         public void onServiceConnected(ComponentName name, IBinder service) {
             PlayService.Mp3Binder binder = (PlayService.Mp3Binder) service;
             player = new Mp3Player(binder.getService(), musicInfos);
+            ((FragmentLRC) fragmentList.get(1)).searchLrc(MusicListUtils.getMusicInfos(MainActivity.this).get(player.getCurrentMusic()).data);
+
+            /*
+         * 判断是否是从文件中启动
+         */
+            Intent intent = getIntent();
+            if (intent.getAction().equals(Intent.ACTION_VIEW)) {
+                MusicInfo externMusic = new MusicInfo();
+                externMusic.data = Uri.decode(intent.getData().toString());
+                play(musicInfos.indexOf(externMusic));
+            }
         }
 
         @Override
@@ -201,11 +246,41 @@ public class MainActivity extends FragmentActivity {
         }
     };
 
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(false);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (REQUEST_CODE == requestCode) {
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+            String[] modes = getResources().getStringArray(R.array.play_mode);
+            switch (sp.getString(getString(R.string.key_play_mode), "" + Mp3Player.MODE_LOOP_ALL))
+            {
+                case "列表循环":
+                    setMode(Mp3Player.MODE_LOOP_ALL);
+                    break;
+                case "随机播放":
+                    setMode(Mp3Player.MODE_RANDOM);
+                    break;
+                case "单曲循环":
+                    setMode(Mp3Player.MODE_LOOP_SINGLE);
+                    break;
+                case "顺序播放":
+                    setMode(Mp3Player.MODE_SEQ);
+                    break;
+            }
+        }
+    }
 
     class ControlButtonListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
+                case R.id.bt_settings:
+                    startActivityForResult(new Intent(MainActivity.this, SettingsActivity.class), REQUEST_CODE);
+                    break;
                 case R.id.bt_play:
                     int state = player.getState();
                     ((ImageButton) v).setImageResource(Mp3Player.STATE_PLAY == state ? R.drawable.pause : R.drawable.play);
@@ -226,19 +301,16 @@ public class MainActivity extends FragmentActivity {
                 case R.id.bt_mode:
                     switch (player.getMode()) {
                         case Mp3Player.MODE_SEQ:
-                            player.setMode(Mp3Player.MODE_LOOP_ALL);
-                            Toast.makeText(MainActivity.this, "列表循环", Toast.LENGTH_SHORT).show();
+                            setMode(Mp3Player.MODE_LOOP_ALL);
                             break;
                         case Mp3Player.MODE_LOOP_ALL:
-                            player.setMode(Mp3Player.MODE_RANDOM);
-                            Toast.makeText(MainActivity.this, "随机播放", Toast.LENGTH_SHORT).show();
+                            setMode(Mp3Player.MODE_RANDOM);
                             break;
                         case Mp3Player.MODE_RANDOM:
-                            player.setMode(Mp3Player.MODE_LOOP_SINGLE);
-                            Toast.makeText(MainActivity.this, "单曲循环", Toast.LENGTH_SHORT).show();
+                            setMode(Mp3Player.MODE_LOOP_SINGLE);
                             break;
                         default:
-                            player.setMode(Mp3Player.MODE_SEQ);
+                            setMode(Mp3Player.MODE_SEQ);
                     }
                     break;
             }
@@ -274,16 +346,18 @@ public class MainActivity extends FragmentActivity {
         public void onReceive(Context context, Intent intent) {
             switch (intent.getAction()) {
                 case ACTION_NEW:
+                    ((FragmentLRC) fragmentList.get(1)).searchLrc(MusicListUtils.getMusicInfos(MainActivity.this).get(player.getCurrentMusic()).data);
                     break;
                 case ACTION_END:
                     next();
                     break;
                 case ACTION_UPDATE:
-                    Log.d("MC", "update");
+                    int currentPosition = intent.getIntExtra("currentPosition", 0);
+                    seekBar.setProgress(currentPosition / 1000);
+                    ((FragmentLRC) fragmentList.get(1)).update(currentPosition);
+
+                    break;
             }
-
         }
-
     }
-
 }

@@ -14,8 +14,13 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="audio/*" />
             </intent-filter>
         </activity>
 
@@ -24,10 +29,7 @@
             android:enabled="true"
             android:exported="true" />
 
-        <receiver
-            android:name="com.example.machao10.broadcast_receiver.Mp3Receiver"
-            android:enabled="true"
-            android:exported="true"></receiver>
+        <activity android:name=".SettingsActivity"></activity>
     </application>
 
 </manifest>

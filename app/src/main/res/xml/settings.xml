@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="设置">
+    <PreferenceCategory android:title="播放模式">
+        <ListPreference
+            android:defaultValue="单曲循环"
+            android:entries="@array/play_mode"
+            android:entryValues="@array/play_mode_value"
+            android:key="@string/key_play_mode"
+            android:title="选择播放模式" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="歌词设置">
+        <ListPreference
+            android:entries="@array/lrc_color"
+            android:entryValues="@array/lrc_color"
+            android:title="歌词颜色" />
+        <ListPreference
+            android:entries="@array/lrc_size"
+            android:entryValues="@array/lrc_size"
+            android:title="歌词大小" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="铃声管理">
+        <ListPreference
+            android:dialogTitle="选择短信铃声"
+            android:entries="@array/ringtone"
+            android:entryValues="@array/ringtonevalue"
+            android:title="短信铃声" />
+        <ListPreference
+            android:dialogTitle="选择电话铃声"
+            android:entries="@array/ringtone"
+            android:entryValues="@array/ringtonevalue"
+            android:title="电话铃声" />
+        <ListPreference
+            android:dialogTitle="选择通知铃声"
+            android:entries="@array/ringtone"
+            android:entryValues="@array/ringtonevalue"
+            android:title="通知铃声" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="定时关机">
+        <EditTextPreference
+            android:summary="将在设置的分钟数后关机"
+            android:title="请输入关机时间" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="摇一摇切歌">
+        <SwitchPreference android:title="开启摇晃切歌" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

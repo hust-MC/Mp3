@@ -44,6 +44,7 @@
         </LinearLayout>
 
         <ImageButton
+            android:id="@+id/bt_settings"
             android:layout_width="80dp"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"

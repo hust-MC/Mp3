@@ -111,4 +111,9 @@ class MusicInfo {
     String data;
     long albumId;
 
+    @Override
+    public boolean equals(Object o) {
+        data = data.replace("file://", "");
+        return data.equals(((MusicInfo) o).data);
+    }
 }

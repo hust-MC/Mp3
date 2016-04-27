@@ -37,7 +37,6 @@ public class PlayService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d("MC", "create");
         mp3Binder = new Mp3Binder();
         mediaPlayer = new MediaPlayer();
 
@@ -51,6 +50,7 @@ public class PlayService extends Service {
         mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
+                sendBroadcast(new Intent(MainActivity.Mp3Receiver.ACTION_END));
             }
         });
 
@@ -96,6 +96,8 @@ public class PlayService extends Service {
 
     public void resume(int position) {
         mediaPlayer.start();
-        mediaPlayer.seekTo(position * 1000);
+        if (position >= 0) {
+            mediaPlayer.seekTo(position * 1000);
+        }
     }
 }

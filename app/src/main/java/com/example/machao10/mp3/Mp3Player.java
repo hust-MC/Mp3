@@ -25,7 +25,7 @@ public class Mp3Player {
     private int currentMusic;
     private int lastMusic;
     private int state = STATE_STOP;
-    private int mode = MODE_SEQ;
+    private int mode = MODE_LOOP_ALL;
 
 
     public Mp3Player(PlayService mp3Binder, List<MusicInfo> musicInfos) {
@@ -63,6 +63,9 @@ public class Mp3Player {
         state = STATE_PLAY;
     }
 
+    void play(String path) {
+        mp3Binder.play(path);
+    }
 
     void pause() {
         mp3Binder.pause();
@@ -76,7 +79,7 @@ public class Mp3Player {
 
 
     void resume() {
-        resume(0);
+        resume(-1);
     }
 
     boolean previous() {
