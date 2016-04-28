@@ -14,12 +14,35 @@
         <item>顺序播放</item>
     </array>
     <array name="play_mode_value">
-        <item>列表循环</item>
-        <item>随机播放</item>
-        <item>单曲循环</item>
-        <item>顺序播放</item>
+        <item>a101</item>
+        <item>a103</item>
+        <item>a102</item>
+        <item>a100</item>
     </array>
 
+    <!--歌词-->
+    <string name="key_lrc_color">key_lrc_color</string>
+    <array name="lrc_color">
+        <item>红色</item>
+        <item>黄色</item>
+        <item>紫色</item>
+    </array>
+    <array name="lrc_color_value">
+        <item>a10</item>
+        <item>a20</item>
+        <item>a30</item>
+    </array>
+    <string name="key_lrc_size">key_lrc_size</string>
+    <array name="lrc_size">
+        <item>大</item>
+        <item>中</item>
+        <item>小</item>
+    </array>
+    <array name="lrc_size_value">
+        <item>a0</item>
+        <item>a1</item>
+        <item>a2</item>
+    </array>
 
     <array name="ringtone">
         <item>铃声1</item>
@@ -32,16 +55,5 @@
         <item>铃声3value</item>
     </array>
 
-
-    <array name="lrc_color">
-        <item>红色</item>
-        <item>黄色</item>
-        <item>粉色</item>
-    </array>
-    <array name="lrc_size">
-        <item>大</item>
-        <item>中</item>
-        <item>小</item>
-    </array>
 
 </resources>

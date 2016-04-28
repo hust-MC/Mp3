@@ -36,11 +36,9 @@ public class LrcReader {
         }
 
         return (m * 60 + s) * 1000 + ms;
-
     }
 
     public List<Lrc> getLrc(String path) {
-        StringBuilder stringBuilder = new StringBuilder();
         try {
             FileInputStream fis = new FileInputStream(new File(path.replace(".mp3", ".lrc")));
             InputStreamReader isReader = new InputStreamReader(fis, "GB2312");
@@ -50,10 +48,9 @@ public class LrcReader {
                 Lrc lrc = new Lrc();
                 //替换字符
                 s = s.replace("[", "");
-                s = s.replace("]", "@");
 
                 //分离“@”字符
-                String lrcValue[] = s.split("@");
+                String lrcValue[] = s.split("]");
                 if (lrcValue.length > 1) {
                     //处理歌词取得歌曲的时间
                     int time = getTime(lrcValue[0]);
@@ -67,12 +64,9 @@ public class LrcReader {
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            stringBuilder.append("木有歌词文件，赶紧去下载！...");
         } catch (IOException e) {
             e.printStackTrace();
-            stringBuilder.append("木有读取到歌词哦！");
         }
-
         return lrcList;
     }
 }

@@ -23,7 +23,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -31,10 +30,9 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.machao10.Lrc.LrcView;
 import com.example.machao10.playservice.PlayService;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +49,7 @@ public class MainActivity extends FragmentActivity {
     Mp3Player player;
     Mp3Receiver receiver;
 
-    public final int REQUEST_CODE = 100;
+    public final int REQUEST_SETTINGS = 100;
 
     /**
      * android 6的机型必须动态申请权限
@@ -168,6 +166,10 @@ public class MainActivity extends FragmentActivity {
                 break;
         }
         player.setMode(mode);
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString(getString(R.string.key_play_mode), "a" + mode);
+        editor.apply();
     }
 
     private void play() {
@@ -253,24 +255,22 @@ public class MainActivity extends FragmentActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (REQUEST_CODE == requestCode) {
+        /*
+        设置菜单处理~
+         */
+        if (REQUEST_SETTINGS == requestCode) {
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-            String[] modes = getResources().getStringArray(R.array.play_mode);
-            switch (sp.getString(getString(R.string.key_play_mode), "" + Mp3Player.MODE_LOOP_ALL))
-            {
-                case "列表循环":
-                    setMode(Mp3Player.MODE_LOOP_ALL);
-                    break;
-                case "随机播放":
-                    setMode(Mp3Player.MODE_RANDOM);
-                    break;
-                case "单曲循环":
-                    setMode(Mp3Player.MODE_LOOP_SINGLE);
-                    break;
-                case "顺序播放":
-                    setMode(Mp3Player.MODE_SEQ);
-                    break;
-            }
+            /*处理播放模式*/
+            String mode = sp.getString(getString(R.string.key_play_mode), "" + Mp3Player.MODE_LOOP_ALL).substring(1);
+            setMode(Integer.parseInt(mode));
+
+            /*处理歌词颜色*/
+            String lrcColor = sp.getString(getString(R.string.key_lrc_color), LrcView.TEXT_YELLOW + "").substring(1);
+            ((FragmentLRC) fragmentList.get(1)).setLrcColor(Integer.parseInt(lrcColor));
+
+            /*处理歌词大小*/
+            String lrcSize = sp.getString(getString(R.string.key_lrc_size), LrcView.TEXT_NORMAL + "").substring(1);
+            ((FragmentLRC) fragmentList.get(1)).setLrcSize(Integer.parseInt(lrcSize));
         }
     }
 
@@ -279,7 +279,7 @@ public class MainActivity extends FragmentActivity {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.bt_settings:
-                    startActivityForResult(new Intent(MainActivity.this, SettingsActivity.class), REQUEST_CODE);
+                    startActivityForResult(new Intent(MainActivity.this, SettingsActivity.class), REQUEST_SETTINGS);
                     break;
                 case R.id.bt_play:
                     int state = player.getState();

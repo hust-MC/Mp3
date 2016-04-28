@@ -12,30 +12,16 @@
     <PreferenceCategory android:title="歌词设置">
         <ListPreference
             android:entries="@array/lrc_color"
-            android:entryValues="@array/lrc_color"
+            android:entryValues="@array/lrc_color_value"
+            android:key="@string/key_lrc_color"
             android:title="歌词颜色" />
         <ListPreference
             android:entries="@array/lrc_size"
-            android:entryValues="@array/lrc_size"
+            android:entryValues="@array/lrc_size_value"
+            android:key="@string/key_lrc_size"
             android:title="歌词大小" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="铃声管理">
-        <ListPreference
-            android:dialogTitle="选择短信铃声"
-            android:entries="@array/ringtone"
-            android:entryValues="@array/ringtonevalue"
-            android:title="短信铃声" />
-        <ListPreference
-            android:dialogTitle="选择电话铃声"
-            android:entries="@array/ringtone"
-            android:entryValues="@array/ringtonevalue"
-            android:title="电话铃声" />
-        <ListPreference
-            android:dialogTitle="选择通知铃声"
-            android:entries="@array/ringtone"
-            android:entryValues="@array/ringtonevalue"
-            android:title="通知铃声" />
-    </PreferenceCategory>
+
     <PreferenceCategory android:title="定时关机">
         <EditTextPreference
             android:summary="将在设置的分钟数后关机"
@@ -44,5 +30,23 @@
     <PreferenceCategory android:title="摇一摇切歌">
         <SwitchPreference android:title="开启摇晃切歌" />
     </PreferenceCategory>
-
+    <!--
+    <PreferenceCategory android:title="铃声管理">
+            <ListPreference
+                android:dialogTitle="选择短信铃声"
+                android:entries="@array/ringtone"
+                android:entryValues="@array/ringtonevalue"
+                android:title="短信铃声" />
+            <ListPreference
+                android:dialogTitle="选择电话铃声"
+                android:entries="@array/ringtone"
+                android:entryValues="@array/ringtonevalue"
+                android:title="电话铃声" />
+            <ListPreference
+                android:dialogTitle="选择通知铃声"
+                android:entries="@array/ringtone"
+                android:entryValues="@array/ringtonevalue"
+                android:title="通知铃声" />
+        </PreferenceCategory>
+        -->
 </PreferenceScreen>
