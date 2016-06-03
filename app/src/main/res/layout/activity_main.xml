@@ -48,7 +48,7 @@
             android:layout_width="80dp"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
-            android:background="#0000"
+            android:background="@drawable/bt_selector"
             android:paddingBottom="8dp"
             android:scaleType="fitCenter"
             android:src="@drawable/settings" />
@@ -76,7 +76,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="#0000"
+            android:background="@drawable/bt_selector"
             android:padding="10dp"
             android:scaleType="centerInside"
             android:src="@drawable/previous" />
@@ -86,7 +86,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="#0000"
+            android:background="@drawable/bt_selector"
             android:padding="10dp"
             android:scaleType="centerInside"
             android:src="@drawable/play" />
@@ -96,7 +96,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="#0000"
+            android:background="@drawable/bt_selector"
             android:padding="10dp"
             android:scaleType="centerInside"
             android:src="@drawable/next" />
@@ -106,7 +106,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:background="#0000"
+            android:background="@drawable/bt_selector"
             android:padding="10dp"
             android:scaleType="centerInside"
             android:src="@drawable/loop_all" />

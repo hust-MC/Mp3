@@ -23,7 +23,6 @@ public class Mp3Player {
     private List<MusicInfo> musicInfos;
 
     private int currentMusic;
-    private int lastMusic;
     private int state = STATE_STOP;
     private int mode = MODE_LOOP_ALL;
 
@@ -38,7 +37,6 @@ public class Mp3Player {
     }
 
     public void setCurrentMusic(int current) {
-        lastMusic = currentMusic;
         currentMusic = current;
     }
 
@@ -72,12 +70,20 @@ public class Mp3Player {
         state = STATE_PAUSE;
     }
 
+    /**
+     * 恢复播放
+     *
+     * @param position 为负则为从暂停中恢复，为正则为从断点恢复。单位是S
+     */
     void resume(int position) {
         mp3Binder.resume(position);
         state = STATE_PLAY;
     }
 
 
+    /**
+     * 从暂停中恢复
+     */
     void resume() {
         resume(-1);
     }
@@ -110,6 +116,11 @@ public class Mp3Player {
         play(getNextMusic());
         return true;
     }
+
+    public void stop() {
+        mp3Binder.stop();
+    }
+
 
     private int getNextMusic() {
         switch (mode) {

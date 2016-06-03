@@ -15,6 +15,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.annotation.Size;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -23,6 +24,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -35,6 +37,8 @@ import com.example.machao10.playservice.PlayService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends FragmentActivity {
 
@@ -48,6 +52,11 @@ public class MainActivity extends FragmentActivity {
     List<Fragment> fragmentList;
     Mp3Player player;
     Mp3Receiver receiver;
+
+
+    private boolean exitOnce; //双击退出标志
+
+    private int playMode = Mp3Player.MODE_LOOP_ALL;
 
     public final int REQUEST_SETTINGS = 100;
 
@@ -120,11 +129,29 @@ public class MainActivity extends FragmentActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                player.resume(seekBar.getProgress());
+                resume(seekBar.getProgress());
             }
         });
 
         initViewPager();
+    }
+
+    private void setPreferences() {
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+            /*处理播放模式*/
+        String mode = sp.getString(getString(R.string.key_play_mode), "" + Mp3Player.MODE_LOOP_ALL).substring(1);
+        playMode = Integer.parseInt(mode);
+
+            /*处理歌词颜色*/
+        String lrcColor = sp.getString(getString(R.string.key_lrc_color), LrcView.TEXT_YELLOW + "").substring(1);
+        ((FragmentLRC) fragmentList.get(1)).setLrcColor(Integer.parseInt(lrcColor));
+
+            /*处理歌词大小*/
+        String lrcSize = sp.getString(getString(R.string.key_lrc_size), LrcView.TEXT_NORMAL + "");
+        if (lrcSize.length() > 1) {
+            lrcSize = lrcSize.substring(1);
+        }
+        ((FragmentLRC) fragmentList.get(1)).setLrcSize(Integer.parseInt(lrcSize));
     }
 
     private void registerMp3Receiver() {
@@ -176,6 +203,11 @@ public class MainActivity extends FragmentActivity {
         play(player.getCurrentMusic());
     }
 
+    public void resume(int position) {
+        player.resume(position);
+    }
+
+
     private void play(int musicNum) {
         player.play(musicNum);
         setDisplay();
@@ -202,6 +234,7 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
+
     @TargetApi(Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -214,7 +247,10 @@ public class MainActivity extends FragmentActivity {
         registerMp3Receiver();
 
         musicInfos = MusicListUtils.getMusicInfos(this);
+
+        setPreferences();
     }
+
 
     @Override
     protected void onDestroy() {
@@ -225,21 +261,33 @@ public class MainActivity extends FragmentActivity {
         unbindService(connection);
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        launchFromFile(intent);
+    }
+
+    private void launchFromFile(Intent intent) {
+            /*
+         * 判断是否是从文件中启动
+         */
+
+        MusicInfo externMusic = new MusicInfo();
+        externMusic.data = Uri.decode(intent.getData().toString());
+        if (Mp3Player.STATE_PLAY == player.getMode()) {
+            player.stop();
+        }
+        play(musicInfos.indexOf(externMusic));
+    }
+
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             PlayService.Mp3Binder binder = (PlayService.Mp3Binder) service;
             player = new Mp3Player(binder.getService(), musicInfos);
             ((FragmentLRC) fragmentList.get(1)).searchLrc(MusicListUtils.getMusicInfos(MainActivity.this).get(player.getCurrentMusic()).data);
-
-            /*
-         * 判断是否是从文件中启动
-         */
-            Intent intent = getIntent();
-            if (intent.getAction().equals(Intent.ACTION_VIEW)) {
-                MusicInfo externMusic = new MusicInfo();
-                externMusic.data = Uri.decode(intent.getData().toString());
-                play(musicInfos.indexOf(externMusic));
+            setMode(playMode);
+            if (getIntent().getAction().equals(Intent.ACTION_VIEW)) {
+                launchFromFile(getIntent());
             }
         }
 
@@ -250,7 +298,22 @@ public class MainActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
-        moveTaskToBack(false);
+        Timer tExit;
+        if (!exitOnce) {
+            exitOnce = true; // 准备退出
+            Toast.makeText(this, "再按一次关闭程序", Toast.LENGTH_SHORT).show();
+            tExit = new Timer();
+            tExit.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    exitOnce = false;
+                }
+            }, 2000);
+
+        } else {
+            moveTaskToBack(false);
+        }
+
     }
 
     @Override
@@ -259,18 +322,7 @@ public class MainActivity extends FragmentActivity {
         设置菜单处理~
          */
         if (REQUEST_SETTINGS == requestCode) {
-            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-            /*处理播放模式*/
-            String mode = sp.getString(getString(R.string.key_play_mode), "" + Mp3Player.MODE_LOOP_ALL).substring(1);
-            setMode(Integer.parseInt(mode));
-
-            /*处理歌词颜色*/
-            String lrcColor = sp.getString(getString(R.string.key_lrc_color), LrcView.TEXT_YELLOW + "").substring(1);
-            ((FragmentLRC) fragmentList.get(1)).setLrcColor(Integer.parseInt(lrcColor));
-
-            /*处理歌词大小*/
-            String lrcSize = sp.getString(getString(R.string.key_lrc_size), LrcView.TEXT_NORMAL + "").substring(1);
-            ((FragmentLRC) fragmentList.get(1)).setLrcSize(Integer.parseInt(lrcSize));
+            setPreferences();
         }
     }
 

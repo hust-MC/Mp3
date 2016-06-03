@@ -2,11 +2,15 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <com.example.machao10.Lrc.LrcView
-        android:id="@+id/lrc"
+    <!--
+        <com.example.machao10.Lrc.LrcView
+            android:id="@+id/lrc"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    -->
+    <ListView
+        android:id="@+id/lv_lrc"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="lrc" />
-
+        android:divider="@null" />
 </FrameLayout>

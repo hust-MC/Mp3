@@ -13,32 +13,17 @@ import java.util.List;
  * Created by machao10 on 2016/4/27.
  */
 public class LrcReader {
-    List<Lrc> lrcList;
+    private static List<Lrc> lrcList;
 
     public LrcReader() {
         lrcList = new ArrayList<>();
     }
 
-    private int getTime(String str) {
-
-        str = str.replace(":", ".");
-        String[] strs = str.split("\\.");
-        if (strs.length != 3) {
-            return -1;
-        }
-        int m, s, ms;
-        try {
-            m = Integer.parseInt(strs[0]);
-            s = Integer.parseInt(strs[1]);
-            ms = Integer.parseInt(strs[2]);
-        } catch (Exception e) {
-            return -1;
-        }
-
-        return (m * 60 + s) * 1000 + ms;
+    public static List<Lrc> getCurrentLrc() {
+        return lrcList;
     }
 
-    public List<Lrc> getLrc(String path) {
+    public List<Lrc> getLrcByUrl(String path) {
         try {
             FileInputStream fis = new FileInputStream(new File(path.replace(".mp3", ".lrc")));
             InputStreamReader isReader = new InputStreamReader(fis, "GB2312");
@@ -69,4 +54,24 @@ public class LrcReader {
         }
         return lrcList;
     }
+
+    private int getTime(String str) {
+
+        str = str.replace(":", ".");
+        String[] strs = str.split("\\.");
+        if (strs.length != 3) {
+            return -1;
+        }
+        int m, s, ms;
+        try {
+            m = Integer.parseInt(strs[0]);
+            s = Integer.parseInt(strs[1]);
+            ms = Integer.parseInt(strs[2]);
+        } catch (Exception e) {
+            return -1;
+        }
+
+        return (m * 60 + s) * 1000 + ms;
+    }
+
 }

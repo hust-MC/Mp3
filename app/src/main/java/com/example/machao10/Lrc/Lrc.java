@@ -15,6 +15,10 @@ public class Lrc {
         this.lrcContent = lrcContent;
     }
 
+    /**
+     * 获取当前歌词的播放时间
+     * @return 返回当前词条的播放时间，单位是Ms
+     */
     public int getLrcTime() {
         return lrcTime;
     }

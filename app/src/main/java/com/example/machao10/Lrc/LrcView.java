@@ -102,7 +102,7 @@ public class LrcView extends TextView {
      * @param url 当前歌词路径
      */
     public void searchLrc(String url) {
-        lrcList = new LrcReader().getLrc(url);
+        lrcList = new LrcReader().getLrcByUrl(url);
     }
 
     public void update(int position) {
