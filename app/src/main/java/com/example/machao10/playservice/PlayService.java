@@ -2,7 +2,6 @@ package com.example.machao10.playservice;
 
 import android.app.Service;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.Handler;
